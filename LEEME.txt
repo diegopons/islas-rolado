@@ -1,0 +1,48 @@
+ISLAS DE CONSERVACION Y PLAN DE ROLADO - aplicacion web (Python + Streamlit)
+
+QUE HACE
+ A partir de un modelo de altura de la vegetacion (CHM) y el limite de un lote:
+ - clasifica la vegetacion por altura y ubica los arboles (por defecto, mas de 4 m);
+ - genera islas de conservacion alrededor de los arboles que ocupan la meta elegida (50 % del lote por defecto);
+ - muestra un tablero: indicadores, relojes, mapa de productos, tablas y graficos de superficies;
+ - recomienda cuanto conservar y cuanto rolar, y calcula el monto total con el costo por hectarea que cargue el usuario;
+ - permite descargar las islas (KML, GeoJSON) y las tablas (CSV).
+
+COMO USARLA (Windows)
+ 1. Tener Python 3.10 o superior instalado (python.org; marcar "Add Python to PATH").
+ 2. Doble clic en instalar.bat (solo la primera vez; necesita internet).
+ 3. Doble clic en iniciar_app.bat. Se abre el navegador en http://localhost:8501
+ Manual: pip install -r requirements.txt   y luego   streamlit run app.py
+
+DATOS (tres formas de elegir el lote)
+ - "Dibujar en el mapa": se dibuja el lote sobre la imagen satelital (herramienta de poligono o rectangulo) y la app corre todo.
+   Sirve para cualquier lote del mundo. Necesita internet.
+ - "Subir archivo": limite del lote en KML, KMZ o GeoJSON (WGS84).
+ - "Ejemplo incluido": recortes de los potreros 1, 4 y 6 (CHM de dron a 1 m y CHM satelital Meta/WRI v2).
+ Altura de la vegetacion (para lote dibujado o subido):
+ - "Satelite (Meta/WRI v2, automatico)": la app lee por internet, desde el repositorio publico de AWS, solo la ventana del
+   lote del mapa global de altura de copas (1 m, alturas en metros enteros). No hace falta ningun vuelo.
+ - "CHM propio (dron)": GeoTIFF con alturas en metros (cualquier sistema de coordenadas; la app lo lleva a UTM a 1 m).
+   Se puede subir (hasta 200 MB) o escribir su ruta en la computadora (para archivos grandes).
+
+FOTOS
+ La carpeta fotos\ alimenta la portada y la galeria. La app usa los archivos cuyo nombre empieza por:
+   portada (imagen ancha del encabezado) | monte | vacas | rolado | pasturas   (JPG o PNG)
+ Se incluyen vistas aereas del monte tomadas del ortomosaico del Potrero 1. Las fotos de vacas, rolado y pasturas
+ se agregan desde la propia app ("Agregar fotos") o copiandolas a la carpeta con esos nombres.
+
+COMO SE CALCULA
+ - A conservar = superficie de las islas.
+ - Arboles fuera de islas = copas de mas de la altura minima que quedan fuera: se esquivan, no se rolan.
+ - A rolar = resto del lote (fuera de islas y sin copas de arboles).
+ - Costo total = hectareas a rolar x costo por hectarea.
+
+LIMITACIONES
+ - Con CHM satelital (alturas en metros enteros) no se distinguen suelo, pasto y arbustal; la app lo avisa y agrupa esas clases.
+   En los potreros 4 y 6 el producto Meta v2 (imagen de 2019) ubica solo parte de los arboles que ve el dron (ver
+   Vuelo_02112026_potrero6y4\Canopy_meta_islas\comparacion_dron_vs_meta.csv).
+ - La recomendacion depende de la meta de conservacion elegida; es un apoyo a la decision tecnica.
+ - El costo no incluye traslados ni tiempos muertos.
+
+ARCHIVOS
+ app.py (interfaz) | nucleo.py (calculo) | requirements.txt | instalar.bat | iniciar_app.bat | datos_ejemplo\ | fotos\
